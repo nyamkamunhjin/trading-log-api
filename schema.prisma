@@ -12,8 +12,40 @@ generator client {
 }
 
 model User {
-  id       String @id @default(cuid())
-  name     String @default("")
-  email    String @unique @default("")
-  password String
+  id                        String            @id @default(cuid())
+  name                      String            @default("")
+  email                     String            @unique @default("")
+  password                  String
+  createdAt                 DateTime?         @default(now())
+  updatedAt                 DateTime?         @default(now())
+  from_Trade_user           Trade[]           @relation("Trade_user")
+  from_TradingStrategy_user TradingStrategy[] @relation("TradingStrategy_user")
+}
+
+model Trade {
+  id                         String            @id @default(cuid())
+  pair                       String            @default("")
+  entry                      Float
+  type                       String?           @default("long")
+  stopLoss                   Float
+  takeProfit                 Float
+  imageUrl                   String            @default("")
+  tradingViewUrl             String            @default("")
+  user                       User[]            @relation("Trade_user")
+  trade                      TradingStrategy?  @relation("Trade_trade", fields: [tradeId], references: [id])
+  tradeId                    String?           @map("trade")
+  createdAt                  DateTime?         @default(now())
+  updatedAt                  DateTime?         @default(now())
+  from_TradingStrategy_trade TradingStrategy[] @relation("TradingStrategy_trade")
+
+  @@index([tradeId])
+}
+
+model TradingStrategy {
+  id               String    @id @default(cuid())
+  createdAt        DateTime? @default(now())
+  updatedAt        DateTime? @default(now())
+  user             User[]    @relation("TradingStrategy_user")
+  trade            Trade[]   @relation("TradingStrategy_trade")
+  from_Trade_trade Trade[]   @relation("Trade_trade")
 }

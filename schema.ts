@@ -20,6 +20,7 @@ import {
   password,
   timestamp,
   select,
+  float,
 } from '@keystone-6/core/fields';
 import { document } from '@keystone-6/fields-document';
 
@@ -34,13 +35,41 @@ export const lists: Lists = {
         isIndexed: 'unique',
         isFilterable: true,
       }),
-
       password: password({ validation: { isRequired: true } }),
+      createdAt: timestamp({ defaultValue: { kind: 'now' } }),
+      updatedAt: timestamp({ defaultValue: { kind: 'now' } }),
     },
-    ui: {
-      listView: {
-        initialColumns: ['name', 'posts'],
-      },
+    // ui: {
+    //   listView: {
+    //     initialColumns: ['name'],
+    //   },
+    // },
+  }),
+  Trade: list({
+    fields: {
+      pair: text({ validation: { isRequired: true }, isFilterable: true }),
+      entry: float({ validation: { isRequired: true } }),
+      type: select({
+        type: 'enum',
+        options: ['long', 'short'],
+        defaultValue: 'long',
+      }),
+      stopLoss: float({ validation: { isRequired: true } }),
+      takeProfit: float({ validation: { isRequired: true } }),
+      imageUrl: text({ validation: { isRequired: true } }),
+      tradingViewUrl: text({ validation: { isRequired: true } }),
+      user: relationship({ ref: 'User', many: true }),
+      trade: relationship({ ref: 'TradingStrategy', many: false }),
+      createdAt: timestamp({ defaultValue: { kind: 'now' } }),
+      updatedAt: timestamp({ defaultValue: { kind: 'now' } }),
+    },
+  }),
+  TradingStrategy: list({
+    fields: {
+      createdAt: timestamp({ defaultValue: { kind: 'now' } }),
+      updatedAt: timestamp({ defaultValue: { kind: 'now' } }),
+      user: relationship({ ref: 'User', many: true }),
+      trade: relationship({ ref: 'Trade', many: true }),
     },
   }),
 };

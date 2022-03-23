@@ -6,11 +6,16 @@ type User {
   name: String
   email: String
   password: PasswordState
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 type PasswordState {
   isSet: Boolean!
 }
+
+scalar DateTime
+  @specifiedBy(url: "https://datatracker.ietf.org/doc/html/rfc3339#section-5.6")
 
 input UserWhereUniqueInput {
   id: ID
@@ -24,6 +29,8 @@ input UserWhereInput {
   id: IDFilter
   name: StringFilter
   email: StringFilter
+  createdAt: DateTimeNullableFilter
+  updatedAt: DateTimeNullableFilter
 }
 
 input IDFilter {
@@ -65,10 +72,23 @@ input NestedStringFilter {
   not: NestedStringFilter
 }
 
+input DateTimeNullableFilter {
+  equals: DateTime
+  in: [DateTime!]
+  notIn: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  gt: DateTime
+  gte: DateTime
+  not: DateTimeNullableFilter
+}
+
 input UserOrderByInput {
   id: OrderDirection
   name: OrderDirection
   email: OrderDirection
+  createdAt: OrderDirection
+  updatedAt: OrderDirection
 }
 
 enum OrderDirection {
@@ -80,6 +100,8 @@ input UserUpdateInput {
   name: String
   email: String
   password: String
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 input UserUpdateArgs {
@@ -91,6 +113,227 @@ input UserCreateInput {
   name: String
   email: String
   password: String
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+type Trade {
+  id: ID!
+  pair: String
+  entry: Float
+  type: TradeTypeType
+  stopLoss: Float
+  takeProfit: Float
+  imageUrl: String
+  tradingViewUrl: String
+  user(
+    where: UserWhereInput! = {}
+    orderBy: [UserOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [User!]
+  userCount(where: UserWhereInput! = {}): Int
+  trade: TradingStrategy
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+enum TradeTypeType {
+  long
+  short
+}
+
+input TradeWhereUniqueInput {
+  id: ID
+}
+
+input TradeWhereInput {
+  AND: [TradeWhereInput!]
+  OR: [TradeWhereInput!]
+  NOT: [TradeWhereInput!]
+  id: IDFilter
+  pair: StringFilter
+  entry: FloatFilter
+  type: TradeTypeTypeNullableFilter
+  stopLoss: FloatFilter
+  takeProfit: FloatFilter
+  imageUrl: StringFilter
+  tradingViewUrl: StringFilter
+  user: UserManyRelationFilter
+  trade: TradingStrategyWhereInput
+  createdAt: DateTimeNullableFilter
+  updatedAt: DateTimeNullableFilter
+}
+
+input FloatFilter {
+  equals: Float
+  in: [Float!]
+  notIn: [Float!]
+  lt: Float
+  lte: Float
+  gt: Float
+  gte: Float
+  not: FloatFilter
+}
+
+input TradeTypeTypeNullableFilter {
+  equals: TradeTypeType
+  in: [TradeTypeType!]
+  notIn: [TradeTypeType!]
+  not: TradeTypeTypeNullableFilter
+}
+
+input UserManyRelationFilter {
+  every: UserWhereInput
+  some: UserWhereInput
+  none: UserWhereInput
+}
+
+input TradeOrderByInput {
+  id: OrderDirection
+  pair: OrderDirection
+  entry: OrderDirection
+  type: OrderDirection
+  stopLoss: OrderDirection
+  takeProfit: OrderDirection
+  imageUrl: OrderDirection
+  tradingViewUrl: OrderDirection
+  createdAt: OrderDirection
+  updatedAt: OrderDirection
+}
+
+input TradeUpdateInput {
+  pair: String
+  entry: Float
+  type: TradeTypeType
+  stopLoss: Float
+  takeProfit: Float
+  imageUrl: String
+  tradingViewUrl: String
+  user: UserRelateToManyForUpdateInput
+  trade: TradingStrategyRelateToOneForUpdateInput
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+input UserRelateToManyForUpdateInput {
+  disconnect: [UserWhereUniqueInput!]
+  set: [UserWhereUniqueInput!]
+  create: [UserCreateInput!]
+  connect: [UserWhereUniqueInput!]
+}
+
+input TradingStrategyRelateToOneForUpdateInput {
+  create: TradingStrategyCreateInput
+  connect: TradingStrategyWhereUniqueInput
+  disconnect: Boolean
+}
+
+input TradeUpdateArgs {
+  where: TradeWhereUniqueInput!
+  data: TradeUpdateInput!
+}
+
+input TradeCreateInput {
+  pair: String
+  entry: Float
+  type: TradeTypeType
+  stopLoss: Float
+  takeProfit: Float
+  imageUrl: String
+  tradingViewUrl: String
+  user: UserRelateToManyForCreateInput
+  trade: TradingStrategyRelateToOneForCreateInput
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+input UserRelateToManyForCreateInput {
+  create: [UserCreateInput!]
+  connect: [UserWhereUniqueInput!]
+}
+
+input TradingStrategyRelateToOneForCreateInput {
+  create: TradingStrategyCreateInput
+  connect: TradingStrategyWhereUniqueInput
+}
+
+type TradingStrategy {
+  id: ID!
+  createdAt: DateTime
+  updatedAt: DateTime
+  user(
+    where: UserWhereInput! = {}
+    orderBy: [UserOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [User!]
+  userCount(where: UserWhereInput! = {}): Int
+  trade(
+    where: TradeWhereInput! = {}
+    orderBy: [TradeOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Trade!]
+  tradeCount(where: TradeWhereInput! = {}): Int
+}
+
+input TradingStrategyWhereUniqueInput {
+  id: ID
+}
+
+input TradingStrategyWhereInput {
+  AND: [TradingStrategyWhereInput!]
+  OR: [TradingStrategyWhereInput!]
+  NOT: [TradingStrategyWhereInput!]
+  id: IDFilter
+  createdAt: DateTimeNullableFilter
+  updatedAt: DateTimeNullableFilter
+  user: UserManyRelationFilter
+  trade: TradeManyRelationFilter
+}
+
+input TradeManyRelationFilter {
+  every: TradeWhereInput
+  some: TradeWhereInput
+  none: TradeWhereInput
+}
+
+input TradingStrategyOrderByInput {
+  id: OrderDirection
+  createdAt: OrderDirection
+  updatedAt: OrderDirection
+}
+
+input TradingStrategyUpdateInput {
+  createdAt: DateTime
+  updatedAt: DateTime
+  user: UserRelateToManyForUpdateInput
+  trade: TradeRelateToManyForUpdateInput
+}
+
+input TradeRelateToManyForUpdateInput {
+  disconnect: [TradeWhereUniqueInput!]
+  set: [TradeWhereUniqueInput!]
+  create: [TradeCreateInput!]
+  connect: [TradeWhereUniqueInput!]
+}
+
+input TradingStrategyUpdateArgs {
+  where: TradingStrategyWhereUniqueInput!
+  data: TradingStrategyUpdateInput!
+}
+
+input TradingStrategyCreateInput {
+  createdAt: DateTime
+  updatedAt: DateTime
+  user: UserRelateToManyForCreateInput
+  trade: TradeRelateToManyForCreateInput
+}
+
+input TradeRelateToManyForCreateInput {
+  create: [TradeCreateInput!]
+  connect: [TradeWhereUniqueInput!]
 }
 
 """
@@ -108,6 +351,29 @@ type Mutation {
   updateUsers(data: [UserUpdateArgs!]!): [User]
   deleteUser(where: UserWhereUniqueInput!): User
   deleteUsers(where: [UserWhereUniqueInput!]!): [User]
+  createTrade(data: TradeCreateInput!): Trade
+  createTrades(data: [TradeCreateInput!]!): [Trade]
+  updateTrade(where: TradeWhereUniqueInput!, data: TradeUpdateInput!): Trade
+  updateTrades(data: [TradeUpdateArgs!]!): [Trade]
+  deleteTrade(where: TradeWhereUniqueInput!): Trade
+  deleteTrades(where: [TradeWhereUniqueInput!]!): [Trade]
+  createTradingStrategy(data: TradingStrategyCreateInput!): TradingStrategy
+  createTradingStrategies(
+    data: [TradingStrategyCreateInput!]!
+  ): [TradingStrategy]
+  updateTradingStrategy(
+    where: TradingStrategyWhereUniqueInput!
+    data: TradingStrategyUpdateInput!
+  ): TradingStrategy
+  updateTradingStrategies(
+    data: [TradingStrategyUpdateArgs!]!
+  ): [TradingStrategy]
+  deleteTradingStrategy(
+    where: TradingStrategyWhereUniqueInput!
+  ): TradingStrategy
+  deleteTradingStrategies(
+    where: [TradingStrategyWhereUniqueInput!]!
+  ): [TradingStrategy]
   endSession: Boolean!
   authenticateUserWithPassword(
     email: String!
@@ -146,6 +412,22 @@ type Query {
   ): [User!]
   user(where: UserWhereUniqueInput!): User
   usersCount(where: UserWhereInput! = {}): Int
+  trades(
+    where: TradeWhereInput! = {}
+    orderBy: [TradeOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Trade!]
+  trade(where: TradeWhereUniqueInput!): Trade
+  tradesCount(where: TradeWhereInput! = {}): Int
+  tradingStrategies(
+    where: TradingStrategyWhereInput! = {}
+    orderBy: [TradingStrategyOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [TradingStrategy!]
+  tradingStrategy(where: TradingStrategyWhereUniqueInput!): TradingStrategy
+  tradingStrategiesCount(where: TradingStrategyWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 }
